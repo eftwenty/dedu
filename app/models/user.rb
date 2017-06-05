@@ -10,5 +10,13 @@ class User < ApplicationRecord
 
   belongs_to :group, optional: true
 
-  validates_presence_of :group_id, if: -> { student? }
+  scope :without_group, -> { where(group_id: nil) }
+  scope :without_group_or_relates_to, -> (group_id) { where('group_id IS NULL OR group_id = ?', group_id) }
+
+  validates_presence_of :first_name, :last_name, unless: -> { super? }
+  validates_presence_of :group_id, if: -> { student? }, allow_blank: true
+
+  def pretty_name
+    "#{first_name} #{last_name}"
+  end
 end

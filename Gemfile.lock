@@ -94,6 +94,8 @@ GEM
       request_store (~> 1.0)
     erubis (2.7.0)
     execjs (2.7.0)
+    faker (1.7.3)
+      i18n (~> 0.5)
     ffi (1.9.18)
     formadmin (0.1.6)
       activeadmin
@@ -248,6 +250,7 @@ DEPENDENCIES
   coffee-rails (~> 4.2)
   devise
   draper
+  faker
   formadmin
   jquery-rails
   listen (~> 3.0.5)

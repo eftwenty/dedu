@@ -60,3 +60,5 @@ gem 'pundit'
 
 gem 'formadmin'
 gem 'activeadmin_addons'
+
+gem 'faker'

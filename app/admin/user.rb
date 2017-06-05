@@ -1,13 +1,18 @@
 ActiveAdmin.register User do
-  permit_params :email, :role, :password, :password_confirmation, :group_id
+  permit_params :email, :role, :password, :password_confirmation, :group_id,
+                :first_name, :last_name
 
   scope :all, default: true
   scope :student
   scope :teacher
 
+
   index do
     selectable_column
     id_column
+    column 'Name', sortable: true do |u|
+      u.pretty_name.present? ? u.pretty_name : 'N/A'
+    end
     column :email
     tag_column :role
     column :current_sign_in_at
@@ -19,7 +24,13 @@ ActiveAdmin.register User do
   show do
     panel "#{user.role.capitalize} Details" do
       attributes_table_for user do
+        row :first_name
+        row :last_name
         row :email
+      end
+    end
+    panel 'System info' do
+      attributes_table_for user do
         row :role
         row :sign_in_count
         row :last_sign_in_count
@@ -28,8 +39,12 @@ ActiveAdmin.register User do
     end
     if user.student?
       panel 'Group' do
-        attributes_table_for user.group do
-          row :code
+        if user.group.present?
+          attributes_table_for user.group do
+            row :code
+          end
+        else
+          div 'No group assigned to this student.'
         end
       end
     end
@@ -37,13 +52,12 @@ ActiveAdmin.register User do
   end
 
   filter :email
-  filter :role, as: :select, collection: User::ROLES
-  filter :current_sign_in_at
   filter :sign_in_count
-  filter :created_at
 
   form do |f|
     f.inputs "Details" do
+      f.input :first_name
+      f.input :last_name
       f.input :email
       f.input :role
       if f.object.new_record?
