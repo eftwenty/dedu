@@ -59,3 +59,4 @@ gem 'draper'
 gem 'pundit'
 
 gem 'formadmin'
+gem 'activeadmin_addons'

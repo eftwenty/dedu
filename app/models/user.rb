@@ -7,4 +7,8 @@ class User < ApplicationRecord
   ROLES = { super: 0, teacher: 1, student: 2 }
 
   enum role: ROLES
+
+  belongs_to :group, optional: true
+
+  validates_presence_of :group_id, if: -> { student? }
 end
