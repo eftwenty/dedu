@@ -47,6 +47,18 @@ ActiveAdmin.register User do
           div 'No group assigned to this student.'
         end
       end
+      panel 'Courses' do
+        if user.courses.present?
+          table_for user.courses do
+            column :title
+            column :description do |c|
+              c.description.html_safe
+            end
+          end
+        else
+          div 'No courses available yet.'
+        end
+      end
     end
     active_admin_comments
   end

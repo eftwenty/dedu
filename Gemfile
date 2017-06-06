@@ -62,3 +62,5 @@ gem 'formadmin'
 gem 'activeadmin_addons'
 
 gem 'faker'
+
+gem 'active_admin_editor', github: 'ejholmes/active_admin_editor'

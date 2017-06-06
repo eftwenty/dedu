@@ -9,6 +9,7 @@ class User < ApplicationRecord
   enum role: ROLES
 
   belongs_to :group, optional: true
+  has_many :courses, through: :group
 
   scope :without_group, -> { where(group_id: nil) }
   scope :without_group_or_relates_to, -> (group_id) { where('group_id IS NULL OR group_id = ?', group_id) }

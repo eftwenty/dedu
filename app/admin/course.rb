@@ -1,0 +1,96 @@
+ActiveAdmin.register Course do
+  permit_params :title, :description, :created_by
+
+  scope_to do
+    @@user = current_user
+
+    Class.new do
+      def self.courses
+        if @@user.student?
+          Course.joins(:groups).where(groups: {id: @@user.group.id})
+        else
+          Course
+        end
+      end
+    end
+  end
+
+  controller do
+    def create
+      @course  = Course.new(post_params.merge(created_by: current_user.id))
+
+      if @course.save
+        redirect_to admin_course_path(@course)
+      else
+        render :new
+      end
+    end
+
+    private
+
+    def post_params
+      params.require(:course).permit(:title, :description)
+    end
+  end
+
+  index do
+    selectable_column
+    id_column
+    column :title
+    column :description do |obj|
+      obj.description.html_safe
+    end
+    column :created_by do |obj|
+      obj.created_by.present? && obj.created_by == current_user.id ?
+          '<strong>Me</strong>'.html_safe :
+          (User.find_by_id(obj.created_by)&.pretty_name || 'N/A')
+    end
+    column :created_at
+    actions
+  end
+
+  show do
+    panel 'Course info' do
+      attributes_table_for course do
+        row :title
+        row :description do
+          course.description.html_safe
+        end
+        row :created_by do |c|
+          User.find_by_id(c.created_by)&.pretty_name || 'N/A'
+        end
+        if current_user.super?
+          row :created_at
+          row :updated_at
+        end
+      end
+    end
+    panel 'Groups assigned' do
+      if course.groups.present?
+        table_for course.groups do
+          column :group do |g|
+            g.code
+          end
+          column :students do |g|
+            g.students.count
+          end
+        end
+      else
+        div "There're no students assigned yet."
+      end
+    end
+    active_admin_comments
+  end
+
+  filter :title
+  filter :description
+
+  form do |f|
+    f.inputs "Details" do
+      f.input :title
+      f.input :description, as: :html_editor
+    end
+    f.actions
+  end
+
+end
