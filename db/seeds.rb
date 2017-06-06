@@ -5,7 +5,7 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-User.create!(email: 'admin@example.com', password: 'password', password_confirmation: 'password')
+User.super.create!(email: 'admin@example.com', password: 'password', password_confirmation: 'password')
 
 30.times do Course.create(title: Faker::Job.field, description: Faker::Lorem.paragraph)  end
 
