@@ -8,7 +8,11 @@ ActiveAdmin.register Course do
     Class.new do
       def self.courses
         if @@user.student?
-          Course.joins(:groups).where(groups: {id: @@user.group.id})
+          if @@user.group.present?
+            Course.joins(:groups).where(groups: {id: @@user.group.id})
+          else
+            nil
+          end
         else
           Course
         end
