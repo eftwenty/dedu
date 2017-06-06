@@ -14,5 +14,6 @@
 !/tmp/.keep
 /config/database.yml
 /.idea/*
+/public/system/*
 # Ignore Byebug command history file.
 .byebug_history

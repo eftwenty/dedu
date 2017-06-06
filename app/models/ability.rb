@@ -40,6 +40,7 @@ class Ability
         can :read, :all
         cannot :manage, User
         can :read, [Course, Group]
+        can :read, User, role: :student
       end
   end
 end

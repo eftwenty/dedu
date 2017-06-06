@@ -1,5 +1,6 @@
 ActiveAdmin.register Course do
-  permit_params :title, :description, :created_by
+  permit_params :title, :description, :created_by,
+                theories_attributes: [:id, :_destroy, :title, :content, :document]
 
   scope_to do
     @@user = current_user
@@ -29,7 +30,8 @@ ActiveAdmin.register Course do
     private
 
     def post_params
-      params.require(:course).permit(:title, :description)
+      params.require(:course).permit(:title, :description, :created_by,
+                                     theories_attributes: [:id, :_destroy, :title, :content, :document])
     end
   end
 
@@ -65,6 +67,19 @@ ActiveAdmin.register Course do
         end
       end
     end
+    panel 'Theories' do
+      if course.theories.present?
+        table_for course.theories do
+          column :title
+          column :content
+          column :document do |t|
+            link_to "#{t.document_file_name}", t.document.url(:original, false)
+          end
+        end
+      else
+        'There is no theory items yet.'
+      end
+    end
     panel 'Groups assigned' do
       if course.groups.present?
         table_for course.groups do
@@ -85,10 +100,17 @@ ActiveAdmin.register Course do
   filter :title
   filter :description
 
-  form do |f|
-    f.inputs "Details" do
+  form html: { enctype: 'multipart/form-data' } do |f|
+    f.inputs 'Details' do
       f.input :title
       f.input :description, as: :html_editor
+    end
+    f.inputs do
+      f.has_many :theories, heading: 'Theories', allow_destroy: true do |t|
+        t.input :title
+        t.input :content
+        t.input :document, as: :file
+      end
     end
     f.actions
   end
