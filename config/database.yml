@@ -50,5 +50,5 @@ test:
 production:
   <<: *default
   database: dedu_production
-  username: dedu
+  username: <%= ENV['DEDU_DATABASE_NAME'] %>
   password: <%= ENV['DEDU_DATABASE_PASSWORD'] %>
