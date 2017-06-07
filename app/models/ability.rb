@@ -29,18 +29,19 @@ class Ability
     # See the wiki for details:
     # https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
 
-      @user = user# guest user (not logged in)
-      if user.super?
-        can :manage, :all
-      elsif user.teacher?
-        can :read, :all
-        can :create, Course
-        can %i[edit update destroy], Course, created_by: user.id
-      else
-        can :read, :all
-        cannot :manage, User
-        can :read, [Course, Group]
-        can :read, User, role: :student
-      end
+    # @user = user# guest user (not logged in)
+    if user.super?
+      can :manage, :all
+    elsif user.teacher?
+      can :read, :all
+      can :create, Course
+      can %i[edit update destroy], Course, created_by: user.id
+    else
+      can :read, :all
+      cannot :manage, User
+      can :read, [Course, Group]
+      can :read, User, role: %i[student teacher]
+      can %i[read create], ActiveAdmin::Comment
+    end
   end
 end

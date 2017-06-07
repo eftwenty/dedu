@@ -10,7 +10,7 @@ ActiveAdmin.register Course do
         if @@user.student?
           Course.joins(:groups).where(groups: {id: @@user.group&.id})
         else
-          Course
+          Course.all
         end
       end
     end
