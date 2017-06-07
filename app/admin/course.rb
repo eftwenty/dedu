@@ -1,6 +1,7 @@
 ActiveAdmin.register Course do
   permit_params :title, :description, :created_by,
-                theories_attributes: [:id, :_destroy, :title, :content, :document]
+                theories_attributes: [:id, :_destroy, :title, :content, :document],
+                practices_attributes: [:id, :_destroy, :title, :content, :document]
 
   scope_to do
     @@user = current_user
@@ -31,13 +32,14 @@ ActiveAdmin.register Course do
 
     def post_params
       params.require(:course).permit(:title, :description, :created_by,
-                                     theories_attributes: [:id, :_destroy, :title, :content, :document])
+                                     theories_attributes: [:id, :_destroy, :title, :content, :document],
+                                     practices_attributes: [:id, :_destroy, :title, :content, :document])
     end
   end
 
   index do
     selectable_column
-    id_column
+    id_column if current_user.super?
     column :title
     column :description do |obj|
       obj.description.html_safe
@@ -80,6 +82,19 @@ ActiveAdmin.register Course do
         'There is no theory items yet.'
       end
     end
+    panel 'Practices' do
+      if course.practices.present?
+        table_for course.practices do
+          column :title
+          column :content
+          column :document do |p|
+            link_to "#{p.document_file_name}", p.document.url(:original, false)
+          end
+        end
+      else
+        'There is no practice items yet.'
+      end
+    end
     panel 'Groups assigned' do
       if course.groups.present?
         table_for course.groups do
@@ -107,6 +122,13 @@ ActiveAdmin.register Course do
     end
     f.inputs do
       f.has_many :theories, heading: 'Theories', allow_destroy: true do |t|
+        t.input :title
+        t.input :content
+        t.input :document, as: :file
+      end
+    end
+    f.inputs do
+      f.has_many :practices, heading: 'Practices', allow_destroy: true do |t|
         t.input :title
         t.input :content
         t.input :document, as: :file

@@ -9,15 +9,16 @@ ActiveAdmin.register User do
 
   index do
     selectable_column
-    id_column
+    id_column if current_user.super?
     column 'Name', sortable: true do |u|
       u.pretty_name.present? ? u.pretty_name : 'N/A'
     end
     column :email
     tag_column :role
+    column :last_sign_in_at
     column :current_sign_in_at
-    column :sign_in_count
-    column :created_at
+    column :sign_in_count if current_user.super?
+    column :created_at if current_user.super?
     actions
   end
 

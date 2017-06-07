@@ -44,12 +44,12 @@ ActiveAdmin.register Group do
 
   index do
     selectable_column
-    id_column
+    id_column if current_user.super?
     column :code
     column :students do |obj|
       obj.students.count
     end
-    column :created_at
+    column :created_at if current_user.super?
     actions
   end
 
