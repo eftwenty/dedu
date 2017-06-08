@@ -36,12 +36,20 @@ class Ability
       can :read, :all
       can :create, Course
       can %i[edit update destroy], Course, created_by: user.id
+      can %i[edit update destroy], Quiz, course: { created_by: user.id }
+      can :create, Quiz
+      can :read, Quiz, [] do |q|
+        q.course.created_by == user.id
+      end
     else
       can :read, :all
       cannot :manage, User
-      can :read, [Course, Group]
+      can :read, Group
+      can :read, Course, id: user.course_ids
       can :read, User, role: %i[student teacher]
       can %i[read create], ActiveAdmin::Comment
+      cannot :manage, Quiz
+      can :read, Quiz, course_id: user.course_ids
     end
   end
 end

@@ -95,6 +95,17 @@ ActiveAdmin.register Course do
         'There is no practice items yet.'
       end
     end
+    panel 'Quiz' do
+      if course.quiz.present?
+        attributes_table_for course.quiz do
+          row :title do |q|
+            link_to q.title, admin_quiz_path(q)
+          end
+        end
+      else
+        'There is no quiz created yet.'
+      end
+    end
     panel 'Groups assigned' do
       if course.groups.present?
         table_for course.groups do

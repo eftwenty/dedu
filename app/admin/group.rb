@@ -66,7 +66,7 @@ ActiveAdmin.register Group do
         div "There're no students assigned yet."
       end
     end
-    unless current_user.student? && current_user.group.id != group.id
+    unless current_user.student? && (current_user.group.blank? || current_user.group.id != group.id)
       panel 'Courses available' do
         if group.courses.present?
           table_for group.courses do
